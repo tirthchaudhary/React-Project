@@ -1,4 +1,3 @@
-import { name } from "ejs";
 import { Check, FastForward,Layout } from "lucide-react";
 import React, { useState } from "react";
 
