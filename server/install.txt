@@ -1,0 +1,15 @@
+express- for express 
+dotenv -> environment variables
+cors -> allow backend to connect with anyOther url
+bcrypt-> encrypt user's password
+jsonwebtoken -> generate token and authenticate the user
+mongoose -> to use mongoDB database
+multer -> to handle file upload
+
+ "type": "module", --> in package.json to make available import and export
+
+  const PORT=process.env.PORT || 3000; --> if port available in environment so use that port otherwise use port 3000
+
+app.use(express.json()) -> make js object to the user data so we can access
+app.use(cors()); -> we can get data/communicate with other website also
+
