@@ -1,4 +1,3 @@
-import { required } from "joi";
 import { BriefcaseBusiness, Globe, Linkedin, Mail, MapPin, Phone, User } from "lucide-react";
 import React from "react";
 
