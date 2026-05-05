@@ -15,7 +15,7 @@ const PORT=process.env.PORT || 3000;
 
 app.use(express.json())
 app.use(cors({
- origin:'http://localhost:5173',
+ origin:['http://localhost:5173','https://react-project-tirth4.vercel.app/app?state=register'],
  credentials:true
 }));
 
