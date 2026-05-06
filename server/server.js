@@ -11,7 +11,7 @@ app.use(express.json())
 app.use(cors({
   origin: [
     'http://localhost:5173',
-    'https://react-project-git-main-tirth4.vercel.app'
+    'react-project-tirth4.vercel.app'
   ],
    credentials:true
 }));
