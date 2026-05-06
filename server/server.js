@@ -6,6 +6,7 @@ import userRouter from './routes/userRoutes.js';
 import resumeRouter from './routes/resumeRouter.js';
 import aiRouter from './routes/aiRoutes.js';
 
+const app=express();
 
 app.use(express.json())
 app.use(cors({
@@ -21,7 +22,7 @@ app.use(cors({
 // database connection
  await connectDB();
 
-const app=express();
+
 const PORT=process.env.PORT || 3000;
 
 app.get("/",(req,res)=>res.send("server is live"));
