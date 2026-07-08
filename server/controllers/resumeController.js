@@ -46,7 +46,7 @@ export const getResume=async(req,res)=>{
         const resume= await Resume.findOne({userId,_id:resumeId});
 
         if (!resume) {
-      res.status(404).json({message:"Resume not Found"});            
+          return res.status(404).json({message:"Resume not Found"});            
         }
 
         resume.__v=undefined;
@@ -101,16 +101,22 @@ export const updateResume=async (req,res)=>{
         JSON.parse(JSON.stringify(resumeData));
 
         if (image) {
-          const imgBufferData=fs.createReadStream(image.path);
-          const response=await imageKit.files.upload({
-            file:imgBufferData,
-            fileName: `resume-${Date.now()}.jpg`,
-            folder:'user-resumes', 
-            transformation:{
-              pre:'w-300,h-300,fo-face,z-0.75'+(removeBackground?',e-bgremove':''),
-            }
-          });
-        resumeDataCopy.personal_info.image=response.url;
+          try {
+            const imgBufferData=fs.createReadStream(image.path);
+            const response=await imageKit.files.upload({
+              file:imgBufferData,
+              fileName: `resume-${Date.now()}.jpg`,
+              folder:'user-resumes', 
+              transformation:{
+                pre:'w-300,h-300,fo-face,z-0.75'+(removeBackground?',e-bgremove':''),
+              }
+            });
+            resumeDataCopy.personal_info.image=response.url;
+          } finally {
+            fs.unlink(image.path, (err) => {
+              if (err) console.error("Error deleting temp file:", err);
+            });
+          }
         }
 
 

@@ -49,7 +49,7 @@ export const loginUser=async(req,res)=>{
      const {email,password}=req.body;
 
     if(!email||!password){
-       res.status(400).json({message:"Missing require field"});
+       return res.status(400).json({message:"Missing require field"});
     }
 
     // check if user is already loggedIn?

@@ -21,8 +21,8 @@ const connectDB = async () =>{
         await mongoose.connect(`${mongodbURI}/${projectName}`)
 
     }catch(error){
-   console.error("Error connecting to MongoDB:")    
-}
+        console.error("Error connecting to MongoDB:", error);
+    }
 
 }
 
