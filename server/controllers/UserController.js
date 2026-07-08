@@ -65,7 +65,7 @@ export const loginUser = async (req, res) => {
 
         // return success message;
         const token = generateToken(user._id);
-        user.password = undefined;
+
 
         return res.status(201).json({ message: "Login successfully", token, user });
     } catch (error) {
@@ -85,8 +85,6 @@ export const getUserById = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
-
-        user.password = undefined;
 
         return res.status(200).json({ user });
     } catch (error) {
