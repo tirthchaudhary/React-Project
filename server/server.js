@@ -6,7 +6,7 @@ import userRouter from './routes/userRoutes.js';
 import resumeRouter from './routes/resumeRouter.js';
 import aiRouter from './routes/aiRoutes.js';
 
-const app=express();
+const app = express();
 
 app.use(express.json())
 const allowedOrigins = [
@@ -35,16 +35,16 @@ app.use(cors({
 
 
 // database connection
- await connectDB();
+await connectDB();
 
 
-const PORT=process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
-app.get("/",(req,res)=>res.send("server is live"));
-app.use('/api/users',userRouter);
-app.use('/api/resumes',resumeRouter);
-app.use('/api/ai',aiRouter);
+app.get("/", (req, res) => res.send("server is live"));
+app.use('/api/users', userRouter);
+app.use('/api/resumes', resumeRouter);
+app.use('/api/ai', aiRouter);
 
-app.listen(PORT,()=>{
-    console.log(`Server is running on port ${PORT}`);
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });

@@ -2,6 +2,7 @@ import { Loader2, Sparkles } from "lucide-react";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import api from "../config/api";
+import toast from "react-hot-toast";
 
 const ProfSummary=({data,onChange,setResumeData})=>{
 
@@ -10,10 +11,15 @@ const ProfSummary=({data,onChange,setResumeData})=>{
 
     const generateSummary=async()=>{
        try {
+        if (!data || !data.trim()) {
+          toast.error("Please enter a summary first before enhancing.");
+          return;
+        }
         setIsGenerating(true);
         const prompt=`enhance my proffesional summary "${data}"`;
         const response=await api.post('/api/ai/enhance-pro-sum',{userContent:prompt},{headers:{Authorization:token}})
         setResumeData(prev=>({...prev,professional_summary:response.data.enhancedContent}));
+        toast.success("Summary enhanced successfully!");
        } catch (error) {
          toast.error(error?.response?.data?.message||error.message);
        } finally{
