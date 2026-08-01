@@ -128,12 +128,12 @@ const ResumeBuilder = () => {
       }
       try {
         const opt = {
-          margin: [10, 10, 10, 10],
+          margin: [15, 12, 15, 12],
           filename: `${resumeData.title || "Resume"}.pdf`,
           image: { type: "jpeg", quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, logging: false },
+          html2canvas: { scale: 2, useCORS: true, logging: false, letterRendering: true },
           jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-          pagebreak: { mode: ["css", "legacy"] }
+          pagebreak: { mode: ["avoid-all", "css", "legacy"] }
         };
         await toast.promise(html2pdf().set(opt).from(element).save(), {
           loading: "Generating PDF...",
