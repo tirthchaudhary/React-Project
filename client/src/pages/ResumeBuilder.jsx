@@ -43,6 +43,7 @@ const ResumeBuilder = () => {
     experience: [],
     education: [],
     project: [],
+    projects: [],
     skills: [],
     template: "classic",
     accent_color: "#3B82F6",
@@ -68,7 +69,12 @@ const ResumeBuilder = () => {
     try {
       const {data}=await api.get(`/api/resumes/get/${resumeId}`,{headers:{Authorization:token}})
       if (data.resume) {
-        setResumeData(data.resume);
+        const projectsList = data.resume.projects || data.resume.project || [];
+        setResumeData({
+          ...data.resume,
+          projects: projectsList,
+          project: projectsList,
+        });
         document.title=data.resume.title;
       }
     } catch (error) {
@@ -125,6 +131,10 @@ const ResumeBuilder = () => {
              delete updateResumeData.personal_info.image
           }
 
+          const projectsList = updateResumeData.projects || updateResumeData.project || [];
+          updateResumeData.projects = projectsList;
+          updateResumeData.project = projectsList;
+
           const formData=new FormData();
            
           formData.append("resumeId",resumeId);
@@ -138,7 +148,12 @@ const ResumeBuilder = () => {
     }
 
           const {data}=await api.put('/api/resumes/update',formData,{headers:{Authorization:token}})
-          setResumeData(data.resume);
+          const savedProjects = data.resume.projects || data.resume.project || [];
+          setResumeData({
+            ...data.resume,
+            projects: savedProjects,
+            project: savedProjects,
+          });
           toast.success(data.message);
        } catch (error) {
          console.error("error saving resume:",error);
@@ -217,7 +232,7 @@ const ResumeBuilder = () => {
                   />
                 )}
                 {activeSection.id === "summary" &&(
-                 <ProfSummary data={resumeData.professional_summary} setResumeData={setResumeData} onChange={(data)=>setResumeData(prev=>({...prev,professional_summary:data}))}/>
+                  <ProfSummary data={resumeData.professional_summary} setResumeData={setResumeData} onChange={(data)=>setResumeData(prev=>({...prev,professional_summary:data}))}/>
                 )}
                 {activeSection.id==='experience'&&(
                   <ExperienceForm data={resumeData.experience} onChange={(data)=>setResumeData(prev=>({...prev,experience:data}))}/>
@@ -226,7 +241,7 @@ const ResumeBuilder = () => {
                   <EducationForm data={resumeData.education} onChange={(data)=>setResumeData(prev=>({...prev,education:data}))}/>
                 )}   
                 {activeSection.id==='projects' &&(
-                  <ProjectForm data={resumeData.project} onChange={(data)=>setResumeData((prev)=>({...prev,project:data}))}/>
+                  <ProjectForm data={resumeData.projects || resumeData.project || []} onChange={(data)=>setResumeData((prev)=>({...prev,projects:data,project:data}))}/>
                 )}         
                 {activeSection.id==='skills' &&(
                   <SkillsForm data={resumeData.skills} onChange={(data)=>setResumeData((prev)=>({...prev,skills:data}))}/>
