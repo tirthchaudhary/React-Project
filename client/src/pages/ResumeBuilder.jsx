@@ -122,20 +122,28 @@ const ResumeBuilder = () => {
 
     const downloadReume=async ()=>{
       const element = document.getElementById("resume-preview");
-      if (!element) {
+      if (!element) return;
+
+      const html2pdfFunc = typeof html2pdf === "function" ? html2pdf : (html2pdf?.default || window.html2pdf);
+
+      if (!html2pdfFunc) {
         window.print();
         return;
       }
+
       try {
         const opt = {
-          margin: [15, 12, 15, 12],
+          margin: [12, 12, 12, 12],
           filename: `${resumeData.title || "Resume"}.pdf`,
           image: { type: "jpeg", quality: 0.98 },
           html2canvas: { scale: 2, useCORS: true, logging: false, letterRendering: true },
           jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
           pagebreak: { mode: ["avoid-all", "css", "legacy"] }
         };
-        await toast.promise(html2pdf().set(opt).from(element).save(), {
+
+        const pdfPromise = html2pdfFunc().set(opt).from(element).save();
+
+        toast.promise(pdfPromise, {
           loading: "Generating PDF...",
           success: "Downloaded PDF successfully!",
           error: "Could not generate PDF",
