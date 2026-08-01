@@ -28,6 +28,7 @@ import SkillsForm from "../components/SkillsForm.jsx";
 import { useSelector } from "react-redux";
 import api from "../config/api.js";
 import toast from "react-hot-toast";
+import html2pdf from "html2pdf.js";
 
 const ResumeBuilder = () => {
 
@@ -119,8 +120,30 @@ const ResumeBuilder = () => {
       }
     }
 
-    const downloadReume=()=>{
-      window.print();
+    const downloadReume=async ()=>{
+      const element = document.getElementById("resume-preview");
+      if (!element) {
+        window.print();
+        return;
+      }
+      try {
+        const opt = {
+          margin: [10, 10, 10, 10],
+          filename: `${resumeData.title || "Resume"}.pdf`,
+          image: { type: "jpeg", quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true, logging: false },
+          jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+          pagebreak: { mode: ["css", "legacy"] }
+        };
+        await toast.promise(html2pdf().set(opt).from(element).save(), {
+          loading: "Generating PDF...",
+          success: "Downloaded PDF successfully!",
+          error: "Could not generate PDF",
+        });
+      } catch (error) {
+        console.error("PDF generation error:", error);
+        window.print();
+      }
     }
 
     const saveResume=async ()=>{
@@ -267,7 +290,7 @@ const ResumeBuilder = () => {
                   {resumeData.public ? <EyeIcon className="size-4"/>:<EyeOffIcon className="size-4"/>}
                   {resumeData.public?'public':'private'}
                 </button>
-                  <button onClick={()=>window.print()} className="flex items-center px-6 py-2 gap-2 text-xs bg-gradient-to-br from-green-100 to-green-200 text-green-600 rounded-lg ring-green-300 hover:ring transition-colors">
+                  <button onClick={downloadReume} className="flex items-center px-6 py-2 gap-2 text-xs bg-gradient-to-br from-green-100 to-green-200 text-green-600 rounded-lg ring-green-300 hover:ring transition-colors">
                   <DownloadIcon className="size-4"/>
                   Download
                  </button>
