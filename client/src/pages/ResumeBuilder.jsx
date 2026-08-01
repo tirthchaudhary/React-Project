@@ -27,9 +27,6 @@ import ProjectForm from "../components/ProjectForm.jsx";
 import SkillsForm from "../components/SkillsForm.jsx";
 import { useSelector } from "react-redux";
 import api from "../config/api.js";
-import toast from "react-hot-toast";
-import html2pdf from "html2pdf.js";
-
 const ResumeBuilder = () => {
 
     const { resumeId } = useParams();
@@ -120,63 +117,8 @@ const ResumeBuilder = () => {
       }
     }
 
-    const downloadReume=async ()=>{
-      const element = document.getElementById("resume-preview");
-      if (!element) return;
-
-      const html2pdfFunc = typeof html2pdf === "function" ? html2pdf : (html2pdf?.default || window.html2pdf);
-
-      if (!html2pdfFunc) {
-        window.print();
-        return;
-      }
-
-      try {
-        const opt = {
-          margin: [12, 12, 12, 12],
-          filename: `${resumeData.title || "Resume"}.pdf`,
-          image: { type: "jpeg", quality: 0.98 },
-          html2canvas: {
-            scale: 2,
-            useCORS: true,
-            allowTaint: true,
-            logging: false,
-            letterRendering: true,
-            onclone: (clonedDoc) => {
-              const canvas = document.createElement("canvas");
-              const ctx = canvas.getContext("2d");
-              const clonedElements = clonedDoc.querySelectorAll("#resume-preview, #resume-preview *");
-
-              clonedElements.forEach((el) => {
-                const computed = window.getComputedStyle(el);
-                const props = ["color", "backgroundColor", "borderColor", "outlineColor", "fill", "stroke"];
-
-                props.forEach((prop) => {
-                  const val = computed[prop];
-                  if (val && val.includes("oklch")) {
-                    ctx.fillStyle = "#000000";
-                    ctx.fillStyle = val;
-                    el.style[prop] = ctx.fillStyle;
-                  }
-                });
-              });
-            }
-          },
-          jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-          pagebreak: { mode: ["css", "legacy"] }
-        };
-
-        const pdfPromise = html2pdfFunc().set(opt).from(element).save();
-
-        await toast.promise(pdfPromise, {
-          loading: "Generating PDF...",
-          success: "Downloaded PDF successfully!",
-          error: (err) => `PDF Error: ${err?.message || "Could not generate PDF"}`,
-        });
-      } catch (error) {
-        console.error("PDF generation error:", error);
-        window.print();
-      }
+    const downloadReume=()=>{
+      window.print();
     }
 
     const saveResume=async ()=>{
