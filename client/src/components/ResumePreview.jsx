@@ -31,13 +31,13 @@ const ResumePreview = ({ data, template, accentColor, classes = "" }) => {
                     `
           @page {
             size: letter;
-            margin: 0;
+            margin: 0.5in;
           }        
           @media print {
             html, body {
-              width: 8.5in;
-              height: 11in;
-              overflow: hidden;
+              width: 100%;
+              height: auto;
+              overflow: visible;
             }
             body * {
               visibility: hidden;
@@ -56,6 +56,10 @@ const ResumePreview = ({ data, template, accentColor, classes = "" }) => {
             }
             #resume-preview * {
               visibility: visible !important;
+            }
+            section {
+              break-inside: avoid;
+              page-break-inside: avoid;
             }
           }  
           `
