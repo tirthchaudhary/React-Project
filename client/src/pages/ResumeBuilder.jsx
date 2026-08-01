@@ -136,17 +136,17 @@ const ResumeBuilder = () => {
           margin: [12, 12, 12, 12],
           filename: `${resumeData.title || "Resume"}.pdf`,
           image: { type: "jpeg", quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, logging: false, letterRendering: true },
+          html2canvas: { scale: 2, useCORS: true, allowTaint: true, logging: false, letterRendering: true },
           jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-          pagebreak: { mode: ["avoid-all", "css", "legacy"] }
+          pagebreak: { mode: ["css", "legacy"] }
         };
 
         const pdfPromise = html2pdfFunc().set(opt).from(element).save();
 
-        toast.promise(pdfPromise, {
+        await toast.promise(pdfPromise, {
           loading: "Generating PDF...",
           success: "Downloaded PDF successfully!",
-          error: "Could not generate PDF",
+          error: (err) => `PDF Error: ${err?.message || "Could not generate PDF"}`,
         });
       } catch (error) {
         console.error("PDF generation error:", error);
