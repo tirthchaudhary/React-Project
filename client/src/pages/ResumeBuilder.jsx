@@ -136,7 +136,32 @@ const ResumeBuilder = () => {
           margin: [12, 12, 12, 12],
           filename: `${resumeData.title || "Resume"}.pdf`,
           image: { type: "jpeg", quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, allowTaint: true, logging: false, letterRendering: true },
+          html2canvas: {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            logging: false,
+            letterRendering: true,
+            onclone: (clonedDoc) => {
+              const canvas = document.createElement("canvas");
+              const ctx = canvas.getContext("2d");
+              const clonedElements = clonedDoc.querySelectorAll("#resume-preview, #resume-preview *");
+
+              clonedElements.forEach((el) => {
+                const computed = window.getComputedStyle(el);
+                const props = ["color", "backgroundColor", "borderColor", "outlineColor", "fill", "stroke"];
+
+                props.forEach((prop) => {
+                  const val = computed[prop];
+                  if (val && val.includes("oklch")) {
+                    ctx.fillStyle = "#000000";
+                    ctx.fillStyle = val;
+                    el.style[prop] = ctx.fillStyle;
+                  }
+                });
+              });
+            }
+          },
           jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
           pagebreak: { mode: ["css", "legacy"] }
         };
