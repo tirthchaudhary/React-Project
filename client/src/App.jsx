@@ -10,6 +10,7 @@ import { login, setLoading } from "./app/features/authSlice.js";
 import { useEffect } from "react";
 import {Toaster} from 'react-hot-toast';
 import Login from "./pages/Login.jsx";
+import ForgotPass from "./pages/ForgotPass.jsx";
       
 const App=()=>{
         
@@ -46,6 +47,7 @@ const App=()=>{
          <Route index element={<Dashboard/>}/>
          <Route path="builder/:resumeId" element={<ResumeBuilder/>}/>
         </Route>
+        <Route path="/forgot-password" element={<ForgotPass/>}/>
         <Route path="view/:resumeId" element={<Preview/>}/>
       </Routes>
     </>

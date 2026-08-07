@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from "../model/user.js";
 import Resume from "../model/resume.js";
+import sendEmail from '../utils/sendEmail.js';
 
 const generateToken = (userId) => {
     const token = jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '7d' })
@@ -105,5 +106,67 @@ export const getUserResumes = async (req, res) => {
         return res.status(200).json({ resumes });
     } catch (error) {
         res.status(400).json({ message: error.message });
+    }
+}
+
+// controller for the forgot password functionality
+
+export const forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        if (!email) {
+            return res.status(400).json({ message: "Please enter your email" });
+        }
+
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).json({ message: "User not found" });
+        }
+
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        user.resetOTP = otp;
+        user.resetOTPExpires = Date.now() + 10 * 60 * 1000;
+        await user.save();
+        
+        // send email with otp
+        await sendEmail({ to: email, subject: "Reset Password", text: `Your OTP is ${otp}` });
+        return res.status(200).json({ message: "OTP sent successfully" });
+    } catch (error) {
+        console.error("Forgot password error:", error);
+        return res.status(500).json({ message: error.message || "Failed to send email" });
+    }
+}
+
+export const resetPassword = async (req, res) => {
+    try {
+        const { email, otp, newPassword } = req.body;
+
+        if (!email || !otp || !newPassword) {
+            return res.status(400).json({ message: "Missing require field" });
+        }
+
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).json({ message: "User not found" });
+        }
+
+        if (user.resetOTP !== otp) {
+            return res.status(400).json({ message: "Invalid OTP" });
+        }
+
+        if (user.resetOTPExpires < Date.now()) {
+            return res.status(400).json({ message: "OTP expired" });
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedPassword;
+        user.resetOTP = '';
+        user.resetOTPExpires = 0;
+        await user.save();
+        return res.status(200).json({ message: "Password reset successfully" });
+    } catch (error) {
+        console.error("Reset password error:", error);
+        return res.status(500).json({ message: error.message || "Failed to reset password" });
     }
 }
